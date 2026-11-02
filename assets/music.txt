@@ -1,0 +1,134 @@
+; Witching Hour — the music (tune45 text). Arrangements of tunes long in
+; the public domain, for three SID voices:
+;   title     Gounod, Funeral March of a Marionette (1872) - the theme
+;             Alfred Hitchcock made famous
+;   midnight  the Westminster Quarters, the hour chime, and the bell
+;             striking: the witching hour
+;   stage     Grieg, In the Hall of the Mountain King (Peer Gynt, 1875):
+;             the game speeds it up as the night goes on (tune_tempo)
+;   boss      Bach, Toccata and Fugue in D minor, BWV 565: the opening,
+;             then a driving toccata figure
+;   count     the Dies irae (the medieval chant of the Day of Wrath),
+;             as Berlioz set it in the witches' sabbath of his Symphonie
+;             fantastique (1830): bells toll, the brass intone it, then it
+;             goes faster and faster into a dance
+;   clear     a fanfare on the chime's notes
+;   gameover  Chopin, Funeral March (Sonata No. 2, 1839)
+
+wavetable snare noise pulse:-12 pulse:-19 pulse:-24
+wavetable toms  noise tri:-5 tri:-9 tri:-12 tri:-14
+
+instrument lead   pulse 09 a7 0800 2 1 pwm=24 vdelay=10
+instrument marc   pulse 03 a5 0600 0 1 pwm=40
+instrument bass   saw   06 a6 0800 0 1 filter=lp res=9 cutoff=280
+instrument stab   pulse 02 54 0300 0 1
+instrument kick   pulse 08 00 0800 0 0 slide=-47
+instrument snare  pulse 00 f0 0800 0 0 hr=1 table=snare
+instrument hat    noise 00 a0 0800 0 0
+instrument timp   tri   0a 00 0800 0 0 table=toms
+instrument organ  pulse 04 c9 0300 1 0 pwm=30 vdelay=12
+instrument pedal  saw   08 c9 0800 0 0 filter=lp res=6 cutoff=200
+instrument bell   tri   09 0a 0000 0 0
+instrument ping   pulse 06 06 0200 0 0
+instrument dirge  saw   6a 8a 0000 3 0 vdelay=12
+instrument hum    tri   8a a8 0000 0 0
+instrument brass  saw   24 a6 0000 2 1 vdelay=6
+
+; ---------------------------------------------------------------- the title
+
+pattern hA: d3:4 d4:2 d4:2 c#4:2 b3:2 | c#4:4 d4:2 e4:4 a3:2
+pattern hAe: d3:4 d4:2 d4:2 c#4:2 b3:2 | c#4:4 d4:2 e4:4 c#4:2
+pattern sDm: arp:3,7 r:2 d4:2 d4:2 r:2 d4:2 d4:2
+pattern sA: arp:4,7 r:2 c#4:2 c#4:2 r:2 c#4:2 c#4:2
+
+tune title 6 loop 12
+v1: @lead *hA | *hA | d3:4 f4:2 a4:4 g4:2 | f4:4 a4:2 c5:4 a#4:2 | a4:4 c5:2 e5:4 d5:2 | \
+    c#5:2 a#4:2 a4:2 g4:2 f4:2 e4:2 | *hA | *hAe | d4:4 a4:2 c5:4 a#4:2 | \
+    a4:2 g4:2 f4:2 d#4:2 g4:2 a#4:2 | d4:2 c#4:2 d4:2 e4:4 f4:2 | e4:6 d4:6
+v2: @bass d2:6 a1:6 | a1:6 e2:6 | d2:6 a1:6 | a1:6 e2:6 | d2:6 a1:6 | f2:6 c2:6 | a1:6 e2:6 | a1:6 c#2:6 | \
+    d2:6 a1:6 | a1:6 e2:6 | d2:6 a1:6 | a1:6 e2:6 | d2:6 a1:6 | g1:6 d2:6 | a1:6 e2:6 | d2:6 d1:6
+v3: @stab *sDm | *sA | *sDm | *sA | *sDm | arp:4,7 r:2 f3:2 f3:2 r:2 f3:2 f3:2 | arp:3,7 r:2 a3:2 a3:2 r:2 a3:2 a3:2 | \
+    arp:4,10 r:2 a3:2 a3:2 r:2 a3:2 a3:2 | *sDm | *sA | *sDm | *sA | *sDm | \
+    arp:3,7 r:2 g3:2 g3:2 r:2 g3:2 g3:2 | arp:4,10 r:2 a3:2 a3:2 r:2 a3:2 a3:2 | arp:3,7 r:2 d4:2 d4:2 d4:6
+
+; ---------------------------------------------------------------- midnight
+
+tune midnight 7 once 12
+v1: @bell e4:2 g#4:2 f#4:2 b3:4 r:2 | e4:2 f#4:2 g#4:2 e4:4 r:2 | g#4:2 e4:2 f#4:2 b3:4 r:2 | \
+    b3:2 f#4:2 g#4:2 e4:6 | e3:6 e3:6 | e3:12
+v2: @ping b5:2 d#6:2 c#6:2 f#5:4 r:2 | b5:2 c#6:2 d#6:2 b5:4 r:2 | d#6:2 b5:2 c#6:2 f#5:4 r:2 | \
+    f#5:2 c#6:2 d#6:2 b5:6 | b4:6 b4:6 | b4:12
+v3: @hum e2:12 | e2:12 | b1:12 | e2:12 | @bell e2:6 e2:6 | e2:12
+
+; ---------------------------------------------------------------- the stage
+
+pattern mA: b3:1 c#4:1 d4:1 e4:1 f#4:1 d4:1 f#4:2 | f4:1 c#4:1 f4:2 e4:1 c4:1 e4:2 | \
+            b3:1 c#4:1 d4:1 e4:1 f#4:1 d4:1 f#4:1 b4:1 | a4:1 f#4:1 d4:1 f#4:1 a4:4
+pattern mB: f#4:1 g#4:1 a#4:1 b4:1 c#5:1 a#4:1 c#5:2 | d5:1 a#4:1 d5:2 c#5:1 a#4:1 c#5:2 | \
+            f#4:1 g#4:1 a#4:1 b4:1 c#5:1 a#4:1 c#5:2 | d5:1 a#4:1 d5:2 c#5:4
+pattern bA: b1:1 f#2:1 b1:1 f#2:1 b1:1 f#2:1 b1:1 f#2:1 | c#2:1 f#2:1 c#2:1 f#2:1 c2:1 e2:1 c2:1 e2:1 | \
+            b1:1 f#2:1 b1:1 f#2:1 b1:1 f#2:1 b1:1 f#2:1 | d2:1 f#2:1 d2:1 f#2:1 d2:1 a2:1 d2:1 f#2:1
+pattern bB: f#1:1 c#2:1 f#1:1 c#2:1 f#1:1 c#2:1 f#1:1 c#2:1 | f#1:1 d2:1 f#1:1 d2:1 f#1:1 c#2:1 f#1:1 c#2:1 | \
+            f#1:1 c#2:1 f#1:1 c#2:1 f#1:1 c#2:1 f#1:1 c#2:1 | f#1:1 d2:1 f#1:1 d2:1 f#1:1 c#2:1 f#1:1 c#2:1
+pattern dQ: @timp f2:2 r:2 c2:2 r:2 | f2:2 r:2 c2:2 r:2 | f2:2 r:2 c2:2 r:2 | f2:2 r:2 f2:1 f2:1 c2:2
+pattern dF: @kick c3:1 @hat a6:1 @snare d4:1 @hat a6:1 @kick c3:1 @kick c3:1 @snare d4:1 @hat a6:1
+pattern dE: @kick c3:1 @hat a6:1 @snare d4:1 @hat a6:1 @kick c3:1 @snare d4:1 @snare d4:1 @snare d4:1
+
+tune stage 11 loop 8
+v1: @marc *mA | *mA | *mB | *mA | @lead *mA+12 | *mA+12 | *mB+12 | *mA+12 |
+v2: @bass *bA | *bA | *bB | *bA | *bA | *bA | *bB | *bA |
+v3: *dQ | *dQ | *dF | *dF | *dF | *dE | *dF | *dF | *dF | *dE | *dF | *dF | *dF | *dE | *dF | *dF | *dF | *dE | *dF | *dF | *dF | *dE | *dF | *dF | *dF | *dE |
+
+; ---------------------------------------------------------------- the boss
+
+pattern tA: a4:1 g4:1 a4:1 f4:1 g4:1 e4:1 f4:1 d4:1 e4:1 c#4:1 d4:1 a3:1 a#3:1 g3:1 a3:1 f3:1
+pattern tB: g3:1 e3:1 f3:1 d3:1 e3:1 c#3:1 d3:1 a2:1 d3:1 e3:1 f3:1 g3:1 a3:1 a#3:1 c#4:1 d4:1
+pattern tC: e4:1 c#4:1 e4:1 a4:1 e4:1 c#4:1 e4:1 a4:1 g4:1 e4:1 g4:1 a#4:1 g4:1 e4:1 g4:1 a#4:1
+pattern tD: f4:1 d4:1 f4:1 a4:1 f4:1 d4:1 f4:1 a4:1 e4:1 c#4:1 e4:1 a4:1 c#5:1 a4:1 e4:1 c#4:1
+pattern pD: d2:2 d3:2 d2:2 d3:2 d2:2 d3:2 d2:2 d3:2
+pattern pA: a1:2 a2:2 a1:2 a2:2 a1:2 a2:2 a1:2 a2:2
+
+tune boss 4 loop 16
+v1: @organ a4:1 g4:1 a4:10 r:4 | g4:1 f4:1 e4:1 d4:1 c#4:4 d4:8 | a3:1 g3:1 a3:10 r:4 | e3:2 f3:2 c#3:4 d3:8 | \
+    a2:1 g2:1 a2:10 r:4 | g2:1 f2:1 e2:1 d2:1 c#2:4 d2:8 | c#3:2 e3:2 g3:2 a#3:2 c#4:2 e4:2 g4:2 a#4:2 | a4:16 | \
+    |: *tA | *tB | *tC | *tD | *tA+12 | *tB+12 | *tC | *tD |
+v2: @organ a3:1 g3:1 a3:10 r:4 | g3:1 f3:1 e3:1 d3:1 c#3:4 d3:8 | a2:1 g2:1 a2:10 r:4 | e2:2 f2:2 c#2:4 d2:8 | \
+    a1:1 g1:1 a1:10 r:4 | g1:1 f1:1 e1:1 d1:1 c#1:4 d1:8 | @pedal c#2:16 | d2:16 | \
+    |: *pD | *pD | *pA | d2:2 d3:2 d2:2 d3:2 a1:2 a2:2 a1:2 a2:2 | *pD | *pD | *pA | d2:2 d3:2 d2:2 d3:2 a1:2 a2:2 a1:2 a2:2
+v3: r:16 | r:16 | r:16 | r:16 | r:16 | r:16 | @organ e3:8 g3:8 | f#3:16 | \
+    |: @timp d2:4 a1:4 d2:4 a1:4 | d2:4 a1:4 d2:4 d2:2 d2:2 | a1:4 e2:4 a1:4 e2:4 | d2:4 a1:4 a1:2 a1:2 a1:4 | \
+       @kick c3:2 @snare d4:2 @kick c3:2 @snare d4:2 @kick c3:2 @snare d4:2 @kick c3:2 @snare d4:2 | \
+       @kick c3:2 @snare d4:2 @kick c3:2 @snare d4:2 @kick c3:2 @snare d4:1 @snare d4:1 @snare d4:2 @snare d4:2 | \
+       @timp a1:4 e2:4 a1:4 e2:4 | d2:4 a1:4 d2:2 d2:2 d2:2 d2:2
+
+; ---------------------------------------------------------------- the Count
+
+pattern dI: f4:2 e4:2 f4:2 d4:2 e4:2 c4:2 d4:4
+pattern dK: a4:2 g4:2 a4:2 f4:2 g4:2 e4:2 f4:4
+pattern dR: f4:3 e4:1 f4:2 d4:2 e4:3 c4:1 d4:4
+pattern dC: d4:2 c4:2 d4:2 a3:2 c4:2 e4:2 d4:4
+pattern pF: f1:2 f2:2 f1:2 f2:2 c2:2 c3:2 c2:2 c3:2
+pattern dS: @bell d4:4 @kick c3:2 @snare d4:2 @bell a3:4 @kick c3:1 @kick c3:1 @snare d4:2
+
+tune count 5 loop 16
+v1: @bell d5:8 a4:8 | d5:8 a4:8 | @brass f3:4 e3:4 f3:4 d3:4 | e3:4 c3:4 d3:8 | a3:4 g3:4 a3:4 f3:4 | g3:4 e3:4 f3:8 | \
+    |: @lead *dI | *dK | *dI | *dC | @marc *dR | *dR+12 | @organ *dK | *dI |
+v2: @pedal d2:16 | d2:16 | d2:16 | a1:8 d2:8 | f1:16 | c2:8 f1:8 | \
+    |: @bass *pD | *pF | *pD | *pA | *pD | *pD | *pF | *pD |
+v3: @timp d2:8 a1:8 | d2:8 a1:8 | @bell d4:8 a3:8 | d4:8 a3:8 | d4:8 a3:8 | d4:8 a3:8 | \
+    |: *dS | *dF *dF | *dS | *dF *dE | *dS | *dF *dF | *dS | *dE *dE |
+
+; ---------------------------------------------------------------- night clear
+
+tune clear 5 once 8
+v1: @brass b4:2 e5:2 g#5:2 b5:2 | b5:4 a5:2 g#5:2 | f#5:2 g#5:2 a5:2 f#5:2 | e5:8
+v2: @brass g#4:2 b4:2 e5:2 g#5:2 | g#5:4 f#5:2 e5:2 | d#5:2 e5:2 f#5:2 d#5:2 | b4:8
+v3: @bass e2:2 b1:2 e2:2 b1:2 | e2:2 b1:2 e2:2 b1:2 | b1:2 f#2:2 b1:2 f#2:2 | e2:8
+
+; ---------------------------------------------------------------- game over
+
+tune gameover 8 once 16
+v1: @dirge a#3:4 a#3:3 a#3:1 a#3:8 | c#4:3 c4:1 c4:3 a#3:1 a#3:3 a3:1 a#3:4 | \
+    a#3:4 a#3:3 a#3:1 a#3:8 | c#4:3 c4:1 c4:3 a#3:1 a#3:3 a3:1 a#3:4 | a#3:16
+v2: @hum a#1:4 f#1:4 a#1:4 f#1:4 | a#1:4 f#1:4 a#1:4 f#1:4 | a#1:4 f#1:4 a#1:4 f#1:4 | a#1:4 f#1:4 a#1:4 f2:4 | a#1:16
+v3: @hum c#3:4 c#3:4 c#3:4 c#3:4 | c#3:4 c#3:4 c#3:4 c#3:4 | c#3:4 c#3:4 c#3:4 c#3:4 | c#3:4 c#3:4 c#3:4 c3:4 | c#3:16

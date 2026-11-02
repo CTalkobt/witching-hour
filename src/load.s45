@@ -1,0 +1,198 @@
+; load.s45 — the art from disk and samples on the audio DMA
+;
+; (After pfest's load.s45, by the same toolchain's author.) The data is four
+; files: WITCHGFX1 (bank 4) and WITCHGFX2 (bank 5), the art; WITCHGFX3 (bank
+; 1), the samples; WITCHGFX4 (bank 1), the music. Each starts with its
+; load address in its bank; the KERNAL loads them where they say (SETBNK,
+; SETNAM, SETLFS with secondary address 1, LOAD) from the drive the program
+; came from. ROM calls go through crt0's __rom_call.
+
+.cpu _45gs02
+.segmentOrder code, data, bss
+
+.global _gfx_load
+.extern ___cbm_target, __rom_call
+
+.data
+name:     .byte $57, $49, $54, $43, $48, $47, $46, $58, $31   ; "WITCHGFX1"
+NAME_LEN = 9
+banks:    .byte 4, 5, 1, 1
+NFILES = 4
+
+.bss
+file:     .res 1
+
+.code
+
+; unsigned char gfx_load(void): 1 when both files are in
+proc _gfx_load
+    lda #0
+    sta file
+    lda #$31
+    sta name + NAME_LEN - 1
+@file:
+    lda #$6B              ; SETBNK: A = the data's bank, X = the name's
+    sta ___cbm_target
+    lda #$FF
+    sta ___cbm_target+1
+    ldx file
+    lda banks,x
+    ldx #0
+    jsr __rom_call
+    lda #$BD              ; SETNAM: A = length, X/Y = the name
+    sta ___cbm_target
+    lda #NAME_LEN
+    ldx #<name
+    ldy #>name
+    jsr __rom_call
+    lda #$BA              ; SETLFS 0, the program's drive (8 if none), 1
+    sta ___cbm_target
+    ldx $00BA
+    cpx #8
+    bcs @dev
+    ldx #8
+@dev:
+    lda #0
+    ldy #1
+    jsr __rom_call
+    lda #$D5              ; LOAD to the file's own address
+    sta ___cbm_target
+    lda #0
+    ldx #0
+    ldy #0
+    jsr __rom_call
+    bcs @fail
+    inc name + NAME_LEN - 1
+    inc file
+    lda file
+    cmp #NFILES
+    bne @file
+    lda #$6B              ; SETBNK 0, 0 again (cbm_load and cbm_save: bank 0)
+    sta ___cbm_target
+    lda #$FF
+    sta ___cbm_target+1
+    lda #0
+    ldx #0
+    jsr __rom_call
+    lda #1
+    ldx #0
+    rts
+@fail:
+    lda #0
+    ldx #0
+    rts
+endproc
+
+; Samples: audio DMA channel snd_ch plays snd_len bytes (8-bit unsigned)
+; from chip RAM at snd_addr (24 bits), at rate register value snd_rate (24
+; bits: Hz * 2^24 / 40.5 MHz), volume snd_vol on both sides, once.
+.global _snd_on
+.global _snd_off
+.global _snd_play
+.global _snd_ch
+.global _snd_addr
+.global _snd_len
+.global _snd_rate
+.global _snd_vol
+
+.data
+_snd_ch:   .byte 0
+_snd_addr: .byte 0, 0, 0
+_snd_len:  .word 0
+_snd_rate: .byte 0, 0, 0
+_snd_vol:  .byte 0
+
+.code
+proc _snd_on
+    lda #0
+    sta $D720
+    sta $D730
+    sta $D740
+    sta $D750
+    lda #$80
+    sta $D711
+    rts
+endproc
+
+proc _snd_off
+    lda #0
+    sta $D720
+    sta $D730
+    sta $D740
+    sta $D750
+    sta $D711
+    rts
+endproc
+
+proc _snd_play
+    lda _snd_ch
+    tax
+    asl
+    asl
+    asl
+    asl
+    tay                   ; the channel's registers: $D720 + Y
+    lda #0
+    sta $D720,y           ; stopped while it is set up
+    lda _snd_addr
+    sta $D721,y
+    sta $D72A,y
+    clc
+    adc _snd_len
+    sta $D727,y           ; the end: the address + the length
+    lda _snd_addr+1
+    sta $D722,y
+    sta $D72B,y
+    adc _snd_len+1
+    sta $D728,y
+    lda _snd_addr+2
+    sta $D723,y
+    sta $D72C,y
+    lda _snd_rate
+    sta $D724,y
+    lda _snd_rate+1
+    sta $D725,y
+    lda _snd_rate+2
+    sta $D726,y
+    lda _snd_vol
+    sta $D729,y
+    sta $D71C,x           ; the same on the other side: in the middle
+    lda #$A2              ; on, unsigned, 8 bits
+    sta $D720,y
+    rts
+endproc
+
+; The raster interrupt's entry, through $0314 from the KERNAL's interrupt
+; entry (which has pushed A X Y Z and B). A raster interrupt goes to the C
+; handler as the CPU would enter it (a return address and the flags
+; pushed); its RTI comes back to tail, which undoes the KERNAL's pushes.
+; Anything else goes on to the KERNAL's handler.
+.global _irq_entry
+.global _irq_old
+.extern _raster_isr
+
+.data
+_irq_old: .word 0
+
+.code
+proc _irq_entry
+    lda $D019
+    and #$01
+    bne @raster
+    jmp (_irq_old)
+@raster:
+    lda #>tail
+    pha
+    lda #<tail
+    pha
+    php
+    jmp _raster_isr
+tail:
+    pla
+    tab
+    plz
+    ply
+    plx
+    pla
+    rti
+endproc
